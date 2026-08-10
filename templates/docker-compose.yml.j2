@@ -1,0 +1,36 @@
+services:
+ nextcloud-db:
+  image: mariadb:10.11
+  container_name: nextcloud-db
+  command: "--transaction-isolation=READ-COMMITTED --log-bin-trust-function-creators=1"
+  environment:
+   MYSQL_ROOT_PASSWORD: "{{ db_root_password }}"
+   MYSQL_PASSWORD: "{{ db_password }}"
+   MYSQL_DATABASE: nextcloud
+   MYSQL_USER: nextcloud
+  volumes:
+   - "{{ data_dir }}/NCLOUD/db:/var/lib/mysql"
+  restart: unless-stopped
+  
+ nextcloud:
+  image: nextcloud:latest
+  container_name: nextcloud
+  ports:
+   - "{{ nextcloud_port }}:80"
+  volumes:
+   - "{{ data_dir }}/NCLOUD/html:/var/www/html"
+   - "{{ data_dir }}/shared_music:/var/www/html/data/{{ nextcloud_user }}/files/Music"
+  restart: unless-stopped
+  
+ navidrome:
+  image: deluan/navidrome:latest
+  container_name: navidrome
+  ports:
+   - "{{ navidrome_port }}:4533"
+  environment:
+   ND_SCROBBLE: "true"
+   ND_LOGLEVEL: "info"
+  volumes:
+   - "{{ data_dir }}/NDROME/data:/data"
+   - "{{ data_dir }}/shared_music:/music:ro"
+  restart: unless-stopped

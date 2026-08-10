@@ -1,0 +1,33 @@
+---
+- name: Deploy Nextcloud and Navidrome
+  hosts: media_server
+  become: true
+
+  vars:
+   data_dir:  /opt/appdata
+   nextcloud_port:  "8080"
+   navidrome_port:  "4533"
+   nextcloud_user:  saw
+   db_root_password: Ch4ngeM3
+   db_password: Ch4ngeM3
+  tasks:
+  - name: Ensure application directories exist
+    ansible.builtin.file:
+      path: "{{ item }}"
+      state: directory
+      mode: '0777'
+    loop:
+      - "{{ data_dir }}/compose"
+      - "{{ data_dir }}/NCLOUD/html"
+      - "{{ data_dir }}/NDROME/data"
+      - "{{ data_dir }}/shared_music"
+  - name: Render docker-compose.yml from template
+    ansible.builtin.template:
+      src: templates/docker-compose.yml.j2
+      dest: "{{ data_dir }}/compose/docker-compose.yml"
+      mode: '0644'
+  - name: Deploy Docker Compose stack
+    ansible.builtin.command:
+      cmd: "docker compose -f {{ data_dir }}/compose/docker-compose.yml up -d"
+    register: compose_output
+    changed_when: "'Created' in compose_output.stdout or 'Starting' in compose_output.stdout"
