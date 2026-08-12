@@ -1,0 +1,9 @@
+- name: Deploy SSH Keys to Remote Host
+  hosts: all
+  become: true
+  tasks:
+    - name: Add SSH public key from GitHub account
+      ansible.posix.authorized_key:
+        user: root  # Replace with target server user
+        state: present
+        key: "https://github.com/saw7ooth.keys"
