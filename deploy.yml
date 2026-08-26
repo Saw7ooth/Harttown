@@ -7,6 +7,8 @@
    data_dir:  /opt/appdata
    nextcloud_port:  "8080"
    navidrome_port:  "4533"
+   jellyfintcp_port: "8096"
+   jellyfinudp_port: "7359" 
    nextcloud_user:  saw
    db_root_password: Ch4ngeM3
    db_password: Ch4ngeM3
@@ -15,12 +17,18 @@
     ansible.builtin.file:
       path: "{{ item }}"
       state: directory
-      mode: '0777'
+      mode: '0755'
     loop:
       - "{{ data_dir }}/compose"
       - "{{ data_dir }}/NCLOUD/html"
       - "{{ data_dir }}/NDROME/data"
       - "{{ data_dir }}/shared_music"
+      - "{{ data_dir }}/shared_movies"
+      - "{{ data_dir }}/shared_movies2"
+      - "{{ data_dir }}/JFIN/config"
+      - "{{ data_dir }}/JFIN/cache"
+      - "{{ data_dir }}/NCLOUD/db"
+      - "{{ data_dir }}/NCLOUD/html"
   - name: Render docker-compose.yml from template
     ansible.builtin.template:
       src: templates/docker-compose.yml.j2

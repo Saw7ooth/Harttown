@@ -34,3 +34,19 @@ services:
    - "{{ data_dir }}/NDROME/data:/data"
    - "{{ data_dir }}/shared_music:/music:ro"
   restart: unless-stopped
+
+ jellyfin:
+  image: jellyfin/jellyfin:latest
+  container_name: jellyfin
+  ports:
+   - "{{ jellyfintcp_port }}:8096/tcp"
+   - "{{ jellyfinudp_port }}:7359/udp"
+  volumes:
+   - "{{ data_dir }}/JFIN/config:/config"
+   - "{{ data_dir }}/JFIN/cache:/cache"
+   - "{{ data_dir }}/shared_movies:/media:ro"
+   - "{{ data_dir }}/shared_movies2:/media2:ro"
+  devices:
+   - /dev/dri:/dev/dri
+  restart: unless-stopped
+
