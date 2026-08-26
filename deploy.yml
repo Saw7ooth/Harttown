@@ -4,21 +4,21 @@
   become: true
 
   vars:
-   data_dir:  /opt/appdata
-   nextcloud_port:  "8080"
-   navidrome_port:  "4533"
+   data_dir: /opt/appdata
+   nextcloud_port: "8080"
+   navidrome_port: "4533"
    jellyfintcp_port: "8096"
-   jellyfinudp_port: "7359" 
-   nextcloud_user:  saw
+   jellyfinudp_port: "7359"
+   nextcloud_user: saw
    db_root_password: Ch4ngeM3
    db_password: Ch4ngeM3
   tasks:
-  - name: Ensure application directories exist
-    ansible.builtin.file:
+   - name: Ensure application directories exist
+     ansible.builtin.file:
       path: "{{ item }}"
       state: directory
       mode: '0755'
-    loop:
+     loop:
       - "{{ data_dir }}/compose"
       - "{{ data_dir }}/NCLOUD/html"
       - "{{ data_dir }}/NDROME/data"
@@ -29,13 +29,13 @@
       - "{{ data_dir }}/JFIN/cache"
       - "{{ data_dir }}/NCLOUD/db"
       - "{{ data_dir }}/NCLOUD/html"
-  - name: Render docker-compose.yml from template
-    ansible.builtin.template:
+   - name: Render docker-compose.yml from template
+     ansible.builtin.template:
       src: templates/docker-compose.yml.j2
       dest: "{{ data_dir }}/compose/docker-compose.yml"
       mode: '0644'
-  - name: Deploy Docker Compose stack
-    ansible.builtin.command:
+   - name: Deploy Docker Compose stack
+     ansible.builtin.command:
       cmd: "docker compose -f {{ data_dir }}/compose/docker-compose.yml up -d"
-    register: compose_output
-    changed_when: "'Created' in compose_output.stdout or 'Starting' in compose_output.stdout"
+     register: compose_output
+     changed_when: "'Created' in compose_output.stdout or 'Starting' in compose_output.stdout"
